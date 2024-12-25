@@ -16,6 +16,16 @@ dependencies:
   flutter_svg: ^2.0.14
   video_player: ^2.9.2
   chewie: ^1.8.5
+  dio: ^5.7.0
+  get: ^4.6.6
+  get_storage: ^2.1.1
+  flutter_easyloading: ^3.0.0
+  google_maps_flutter: ^2.2.5   # Latest version for Google Maps
+  geolocator: ^10.1.0           # For retrieving the user's location
+  permission_handler: ^11.0.1
+  flutter_polyline_points: ^2.1.0
+  geocoding: ^2.0.5
+  file_picker: ^8.1.6
 
 dev_dependencies:
   flutter_test:

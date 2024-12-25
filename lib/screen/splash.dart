@@ -1,5 +1,6 @@
 import 'package:class_rasel/componants/buttomNavBar.dart';
 import 'package:class_rasel/screen/home.dart';
+import 'package:class_rasel/screen/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => BottomNavBar()),
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     });
   }
