@@ -1,15 +1,21 @@
+import 'package:dio/dio.dart';
+import 'package:get/get_connect/http/src/multipart/form_data.dart';
+import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
+
+import 'every class/user.dart';
+
 completeSignup(User us) async {
   Dio dio = Dio();
 
   // Replace with your file paths
-
 
   // Prepare FormData
   FormData formData = FormData.fromMap({
     'className': us.className,
     'alternateMobileNumber': us.alternateMobileNumber,
     'aadhaarCardNumber': us.adharCardNum,
-    'panCardFile': await MultipartFile.fromFile(us.panCardFile, filename: 'Pan Card'),
+    'panCardFile':
+        await MultipartFile.fromFile(us.panCardFile, filename: 'Pan Card'),
     'price': '0',
     'mobileNumber': us.mobileNumber,
     'location': us.locationName,
@@ -17,7 +23,8 @@ completeSignup(User us) async {
     //'certificatesFile': await MultipartFile.fromFile(certificatesFilePath, filename: 'Cv_1 (1).pdf'),
     'photographFile': await MultipartFile.fromFile(us.photo, filename: 'Photo'),
     'categoryId': us.category,
-    'aadhaarCardFile': await MultipartFile.fromFile(us.aadharCardFile, filename: 'Cv_1 (1).pdf'),
+    'aadhaarCardFile': await MultipartFile.fromFile(us.aadharCardFile,
+        filename: 'Cv_1 (1).pdf'),
     'coordinates': us.latLang,
     'email': us.email,
     'description': us.description,

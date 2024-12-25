@@ -31,7 +31,8 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Push content and buttons apart
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // Push content and buttons apart
           children: [
             // Content Area
             Expanded(
@@ -114,44 +115,48 @@ class _SignupState extends State<Signup> {
                       onPressed: isLoadingUser
                           ? null
                           : () async {
-                        // Validation: Check if fields are empty
+                              // Validation: Check if fields are empty
 
+                              setState(() {
+                                isLoadingUser = true;
+                              });
 
-                        setState(() {
-                          isLoadingUser = true;
-                        });
+                              EasyLoading.show(status: 'Signing up...');
+                              try {
+                                if (_name.text.isEmpty ||
+                                    _email.text.isEmpty ||
+                                    _pass.text.isEmpty) {
+                                  EasyLoading.showError(
+                                      'Please fill all fields');
+                                  return; // Prevent signup if fields are empty
+                                }
+                                var result = await signupService(
+                                    _name.text, _email.text, _pass.text);
 
-                        EasyLoading.show(status: 'Signing up...');
-                        try {
-                          if (_name.text.isEmpty || _email.text.isEmpty || _pass.text.isEmpty) {
-                            EasyLoading.showError('Please fill all fields');
-                            return; // Prevent signup if fields are empty
-                          }
-                          var result = await signupService(
-                              _name.text, _email.text, _pass.text);
+                                if (result.statusCode == 200) {
+                                  box.write('token', result.data["token"]);
+                                  User us = User(
+                                      name: _name.text,
+                                      email: _email.text,
+                                      role: "user",
+                                      latLang: []);
+                                  signupCont.user = us;
 
-                          if (result.statusCode == 200) {
-                            box.write('token', result.data["token"]);
-                            User us = User(
-                                name: _name.text,
-                                email: _email.text,
-                                role: "user",
-                                latLang: []);
-                            signupCont.user = us;
-
-                            EasyLoading.showSuccess(result.data["message"]);
-                            Get.offNamed('/Loader');
-                          }
-                        } catch (e) {
-                          print("Error: $e");
-                          EasyLoading.showError('An error occurred. Please try again.');
-                        } finally {
-                          setState(() {
-                            isLoadingUser = false;
-                          });
-                          EasyLoading.dismiss();
-                        }
-                      },
+                                  EasyLoading.showSuccess(
+                                      result.data["message"]);
+                                  Get.offNamed('/Loader');
+                                }
+                              } catch (e) {
+                                print("Error: $e");
+                                EasyLoading.showError(
+                                    'An error occurred. Please try again.');
+                              } finally {
+                                setState(() {
+                                  isLoadingUser = false;
+                                });
+                                EasyLoading.dismiss();
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Color.fromARGB(255, 15, 98, 233),
@@ -163,9 +168,9 @@ class _SignupState extends State<Signup> {
                       child: isLoadingUser
                           ? CircularProgressIndicator(color: Colors.white)
                           : Text(
-                        'Signup as User',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
+                              'Signup as User',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -176,48 +181,58 @@ class _SignupState extends State<Signup> {
                       onPressed: isLoadingOwner
                           ? null
                           : () async {
-                        // Validation: Check if fields are empty
-                        if (_name.text.isEmpty || _email.text.isEmpty || _pass.text.isEmpty) {
-                          EasyLoading.showError('Please fill all fields');
-                          return; // Prevent signup if fields are empty
-                        }
-
-                        setState(() {
-                          isLoadingOwner = true;
-                        });
-
-                        EasyLoading.show(status: 'Signing up...');
-                        try {
-                              var result = await signupService(
-                              _name.text, _email.text, _pass.text);
-
-                              if (result.statusCode == 200) {
-                                box.write('token', result.data["token"]);
-                                User us = User(
-                                    name: _name.text,
-                                    email: _email.text,
-                                    role: "class_owner",
-                                    latLang: []);
-                                signupCont.user = us;
-
-                                EasyLoading.showSuccess(result.data["message"]);
-
-                                if(result.data["error"]==0){
-                                  Get.toNamed('/SecondSignUp');
-                                }
+                              // Validation: Check if fields are empty
+                              if (_name.text.isEmpty ||
+                                  _email.text.isEmpty ||
+                                  _pass.text.isEmpty) {
+                                EasyLoading.showError('Please fill all fields');
+                                return; // Prevent signup if fields are empty
                               }
 
-                          EasyLoading.showSuccess('Signed up as Class Owner');
-                        } catch (e) {
-                          print("Error: $e");
-                          EasyLoading.showError('An error occurred. Please try again.');
-                        } finally {
-                          setState(() {
-                            isLoadingOwner = false;
-                          });
-                          EasyLoading.dismiss();
-                        }
-                      },
+                              setState(() {
+                                isLoadingOwner = true;
+                              });
+
+                              EasyLoading.show(status: 'Signing up...');
+                              try {
+                                var result = await signupService(
+                                    _name.text, _email.text, _pass.text);
+                                if (result == null) {
+                                  EasyLoading.showError(
+                                      'An error occurred. Please try again.');
+                                  return;
+                                }
+
+                                if (result.statusCode == 200) {
+                                  box.write('token', result.data["token"]);
+                                  User us = User(
+                                      name: _name.text,
+                                      email: _email.text,
+                                      role: "class_owner",
+                                      latLang: []);
+                                  signupCont.user = us;
+
+                                  EasyLoading.showSuccess(
+                                      result.data["message"]);
+
+                                  if (result.data["error"] == 0) {
+                                    Get.toNamed('/SecondSignUp');
+                                  }
+                                }
+
+                                EasyLoading.showSuccess(
+                                    'Signed up as Class Owner');
+                              } catch (e) {
+                                print("Error: $e");
+                                EasyLoading.showError(
+                                    'An error occurred. Please try again.');
+                              } finally {
+                                setState(() {
+                                  isLoadingOwner = false;
+                                });
+                                EasyLoading.dismiss();
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Color.fromARGB(255, 15, 98, 233),
@@ -229,9 +244,9 @@ class _SignupState extends State<Signup> {
                       child: isLoadingOwner
                           ? CircularProgressIndicator(color: Colors.white)
                           : Text(
-                        'Signup as Class Owner',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
+                              'Signup as Class Owner',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
                     ),
                   ),
                 ],

@@ -1,9 +1,7 @@
 import 'package:class_rasel/Global.dart';
 import 'package:dio/dio.dart';
 
-import 'package:dio/dio.dart';
-
-signupService(String name,String email,String pass) async {
+signupService(String name, String email, String pass) async {
   var dio = Dio();
   print("           11111            ");
   try {
@@ -13,7 +11,7 @@ signupService(String name,String email,String pass) async {
         'name': name,
         'email': email,
         'password': pass,
-        'role': 'user'
+        'role': 'class_owner',
       },
       options: Options(
         headers: {
@@ -27,6 +25,6 @@ signupService(String name,String email,String pass) async {
     return response;
   } catch (e) {
     print('Error: $e');
+    return null;
   }
 }
-
