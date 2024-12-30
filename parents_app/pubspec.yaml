@@ -42,6 +42,20 @@ dependencies:
   video_player: ^2.5.0
   chewie: ^1.2.2
   flutter_svg:
+  shared_preferences:
+  socket_io_client:
+  flutter_chat_ui:
+  uuid:
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  flutter_easyloading:
+  carousel_slider:
+  intl:
+  animated_theme_switcher:
+  image_picker:
+  whitecodel_reels: ^0.0.6
+  cached_network_image:
+  interactiveviewer_gallery_plus: ^0.1.0
 
 dev_dependencies:
   flutter_test:

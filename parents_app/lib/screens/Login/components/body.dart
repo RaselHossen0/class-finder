@@ -1,10 +1,15 @@
+import 'package:class_finder/screens/auth/Passwords/otpSendScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../components/background.dart';
 import '../../../components/rounded_button.dart';
+import '../../../constants.dart';
+import '../../../providers/user_provider.dart';
 import '../../Signup/signup_screen.dart';
+import '../../nav/navigation_screen.dart';
 import '../loginprovider.dart';
 import 'already_have_an_acount_check.dart';
 import 'rounded_input_text_field.dart';
@@ -26,6 +31,7 @@ class _BodyState extends ConsumerState<Body> {
     final loginState = ref.watch(loginProvider);
 
     Size size = MediaQuery.of(context).size;
+
     return Background(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -52,6 +58,7 @@ class _BodyState extends ConsumerState<Body> {
               icon: Icons.person,
             ),
             RoundedPasswordField(
+              hintText: "Password",
               controller: _passwordController,
               onChanged: (value) {},
             ),
@@ -60,11 +67,25 @@ class _BodyState extends ConsumerState<Body> {
             else
               RoundedButton(
                 text: "LOGIN",
-                press: () {
+                press: () async {
                   ref.read(loginProvider.notifier).login(
                         _emailController.text,
                         _passwordController.text,
                       );
+                  print(loginState.token);
+                  if (loginState.token != null) {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString('token', loginState.token!);
+                    ref.read(userDetailsProvider.notifier).fetchUserDetails(
+                          loginState.token!,
+                        );
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AppScreens()));
+                  }
                 },
               ),
             if (loginState.errorMessage != null)
@@ -81,6 +102,30 @@ class _BodyState extends ConsumerState<Body> {
                 ),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Forgot Password ? ',
+                  style: const TextStyle(color: cPrimaryColor),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const OtpSendScreen();
+                    }));
+                  },
+                  child: Text(
+                    'Reset',
+                    style: const TextStyle(
+                      color: cPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

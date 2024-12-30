@@ -20,6 +20,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
   Future<void> login(String email, String password) async {
     state = LoginState(isLoading: true);
+    state = LoginState(token: null, errorMessage: null);
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/auth/login'),
@@ -36,12 +37,15 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
-        state = LoginState(token: data['token']);
+        if (data['error'] == 0) {
+          state = LoginState(token: data['token']);
+        } else {
+          state = LoginState(errorMessage: data['message']);
+        }
       } else {
         state = LoginState(
             errorMessage:
-                json.decode(response.body)["error"] ?? 'Login failed');
+                json.decode(response.body)["message"] ?? 'Login failed');
       }
     } catch (e) {
       state = LoginState(errorMessage: 'Login failed');

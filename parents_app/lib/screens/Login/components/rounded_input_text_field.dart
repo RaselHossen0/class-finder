@@ -20,7 +20,8 @@ class RoundedInputTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFieldContainer(
         child: TextField(
-      onChanged: onChanged,
+      controller: controller,
+      // onChanged: onChanged,
       decoration: InputDecoration(
         icon: Icon(
           icon,
