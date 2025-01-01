@@ -22,13 +22,16 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
 });
 
 class Category {
+  final int id;
   final String name;
   final String? logo; // Logo can be nullable
 
-  Category({required this.name, this.logo});
+  Category({required this.name, this.logo, required this.id});
 
   factory Category.fromJson(Map<String, dynamic> json) {
+    print(json);
     return Category(
+      id: json['id'],
       name: json['name'],
       logo: json['logo'], // Assuming the logo URL comes from the API
     );

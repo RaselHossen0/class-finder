@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:class_finder/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,7 +36,7 @@ class UserState {
       adminVerified: json['adminVerified'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
-      profileImage: json['profileImage'],
+      profileImage: frontEndUrl + "/" + json['profileImage'],
     );
   }
 

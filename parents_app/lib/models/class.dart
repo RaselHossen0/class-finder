@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:class_finder/constants.dart';
+import 'package:class_finder/models/category.dart';
 
 class ClassModel {
   final int id;
@@ -9,7 +10,7 @@ class ClassModel {
   final String location;
   final int price;
   final double rating;
-  final String category;
+  final Category category;
   final Coords coords;
   final int ClassOwnerId;
 
@@ -40,7 +41,7 @@ class ClassModel {
       location: json['location'],
       price: json['price'],
       rating: json['rating'].toDouble(),
-      category: json['Category']['name'],
+      category: Category.fromJson(json['Category']),
       coords: Coords(
         lat: double.parse(json['coordinates']['coordinates'][0].toString()),
         lng: double.parse(json['coordinates']['coordinates'][1].toString()),

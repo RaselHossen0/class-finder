@@ -56,7 +56,9 @@ dependencies:
   whitecodel_reels: ^0.0.6
   cached_network_image:
   interactiveviewer_gallery_plus: ^0.1.0
-
+  infinite_scroll_pagination:
+  flutter_popup:
+  onesignal_flutter:
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -7,6 +7,7 @@ class LocationWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locationState = ref.watch(locationNotifierProvider);
+    // final user = ref.watch(userDetailsProvider);
 
     return Scaffold(
       body: locationState.when(
@@ -34,10 +35,16 @@ class LocationWidget extends ConsumerWidget {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () {},
-                ),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(100),
+                //   child: Container(
+                //     height: 20,
+                //     width: 20,
+                //     child: Image.network(
+                //       user!.profileImage,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           );
