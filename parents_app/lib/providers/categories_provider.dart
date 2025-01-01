@@ -29,7 +29,7 @@ class Category {
   Category({required this.name, this.logo, required this.id});
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    print(json);
+    // print(json);
     return Category(
       id: json['id'],
       name: json['name'],

@@ -37,6 +37,7 @@ class Event {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<EventMedia> eventMedia;
+  final String className;
 
   Event({
     required this.id,
@@ -48,23 +49,25 @@ class Event {
     required this.createdAt,
     required this.updatedAt,
     required this.eventMedia,
+    required this.className,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     var mediaList = json['EventMedia'] as List;
     List<EventMedia> eventMediaList =
         mediaList.map((i) => EventMedia.fromJson(i)).toList();
-
+    // print(json);
     return Event(
       id: json['id'],
       title: json['title'],
       date: DateTime.parse(json['date']),
       description: json['description'],
-      location: json['location'],
+      location: json['location'] ?? '',
       classId: json['classId'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       eventMedia: eventMediaList,
+      className: json['Class']['name'],
     );
   }
 }

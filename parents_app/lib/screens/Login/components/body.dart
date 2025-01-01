@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:class_finder/screens/auth/Passwords/otpSendScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../components/background.dart';
@@ -25,13 +29,97 @@ class Body extends ConsumerStatefulWidget {
 class _BodyState extends ConsumerState<Body> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
+  String? errorMessage;
+  String? token;
+
+  Future<void> login(String email, String password) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    EasyLoading.show(status: 'Logging in...');
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/auth/login'),
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json',
+        },
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['error'] == 0) {
+          setState(() {
+            token = data['token'];
+          });
+          EasyLoading.showSuccess(data['message']);
+
+          // Store the token in SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token!);
+
+          // Navigate to the next screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AppScreens()),
+          );
+        } else {
+          setState(() {
+            errorMessage = data['message'];
+          });
+          EasyLoading.showError(data['message']);
+        }
+      } else {
+        final errorMessage =
+            json.decode(response.body)["message"] ?? 'Login failed';
+        setState(() {
+          this.errorMessage = errorMessage;
+        });
+        EasyLoading.showError(errorMessage);
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Login failed';
+      });
+      EasyLoading.showError('Login failed');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+      EasyLoading.dismiss();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginProvider);
-
+    print(loginState.token);
     Size size = MediaQuery.of(context).size;
+    if (loginState.token != null) {
+      // This checks for the token after it is updated
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', loginState.token!);
 
+        // Fetch user details and navigate to the next screen
+        await ref
+            .read(userDetailsProvider.notifier)
+            .fetchUserDetails(loginState.token!);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AppScreens()),
+        );
+      });
+    }
     return Background(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -62,33 +150,16 @@ class _BodyState extends ConsumerState<Body> {
               controller: _passwordController,
               onChanged: (value) {},
             ),
-            if (loginState.isLoading)
+            if (isLoading)
               CircularProgressIndicator()
             else
               RoundedButton(
                 text: "LOGIN",
                 press: () async {
-                  ref.read(loginProvider.notifier).login(
-                        _emailController.text,
-                        _passwordController.text,
-                      );
-                  print(loginState.token);
-                  if (loginState.token != null) {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    await prefs.setString('token', loginState.token!);
-                    ref.read(userDetailsProvider.notifier).fetchUserDetails(
-                          loginState.token!,
-                        );
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AppScreens()));
-                  }
+                  await login(_emailController.text, _passwordController.text);
                 },
               ),
-            if (loginState.errorMessage != null)
+            if (errorMessage != null)
               Text(
                 loginState.errorMessage!,
                 style: TextStyle(color: Colors.red),

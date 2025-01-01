@@ -49,6 +49,26 @@ class LocationNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
       state = AsyncError(e, stackTrace);
     }
   }
+
+  Future<void> updateLocation(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      // Extract city name
+      String city = placemarks.first.locality ?? 'Unknown City';
+
+      // Update state with the custom latitude, longitude, and city name
+      state = AsyncData({
+        'latitude': latitude,
+        'longitude': longitude,
+        'city': city,
+        'address': placemarks.first.name,
+      });
+    } catch (e, stackTrace) {
+      state = AsyncError(e, stackTrace);
+    }
+  }
 }
 
 // Provider for LocationNotifier

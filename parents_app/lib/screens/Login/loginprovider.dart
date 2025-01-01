@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,8 +20,8 @@ class LoginNotifier extends StateNotifier<LoginState> {
   LoginNotifier() : super(LoginState());
 
   Future<void> login(String email, String password) async {
-    state = LoginState(isLoading: true);
-    state = LoginState(token: null, errorMessage: null);
+    EasyLoading.show(status: 'Logging in...');
+    state = LoginState(isLoading: true, token: null, errorMessage: null);
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/auth/login'),
@@ -33,22 +34,31 @@ class LoginNotifier extends StateNotifier<LoginState> {
           'password': password,
         }),
       );
-      print(response.body);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['error'] == 0) {
-          state = LoginState(token: data['token']);
+          state = LoginState(
+            token: data['token'],
+          );
+          print(state.token);
+          EasyLoading.showSuccess(data['message']);
         } else {
           state = LoginState(errorMessage: data['message']);
+          EasyLoading.showError(data['message']);
         }
       } else {
-        state = LoginState(
-            errorMessage:
-                json.decode(response.body)["message"] ?? 'Login failed');
+        final errorMessage =
+            json.decode(response.body)["message"] ?? 'Login failed';
+        state = LoginState(errorMessage: errorMessage);
+        EasyLoading.showError(errorMessage);
       }
     } catch (e) {
       state = LoginState(errorMessage: 'Login failed');
+      EasyLoading.showError('Login failed');
+    } finally {
+      EasyLoading.dismiss();
+      state = LoginState(isLoading: false);
     }
   }
 }
