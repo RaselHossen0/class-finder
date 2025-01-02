@@ -41,7 +41,7 @@ final pagedClassesProvider = Provider<PagingController<int, ClassModel>>((ref) {
 
           // Build the URL with query and filter parameters
           final url = Uri.parse(
-              'http://localhost:3000/classes/get/all?page=$pageKey&limit=3&coordinates=[$latitude,$longitude]&search=$searchQuery&minPrice=${filterState.priceRange}&maxPrice=${filterState.priceRangeMax}&category=${filterState.category}&distance=${filterState.distanceRange}');
+              'https://classroom-api.raselhossen.tech/classes/get/all?page=$pageKey&limit=3&coordinates=[$latitude,$longitude]&search=$searchQuery&minPrice=${filterState.priceRange}&maxPrice=${filterState.priceRangeMax}&category=${filterState.category}&distance=${filterState.distanceRange}');
 
           final response = await http.get(
             url,

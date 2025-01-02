@@ -17,7 +17,7 @@ class CategoryRowWidget extends ConsumerWidget {
         children: categories
             .map((category) => _buildCategoryItem(
                   category.logo != null
-                      ? NetworkImage(frontEndUrl + category.logo!)
+                      ? NetworkImage(category.logo!)
                       : AssetImage(categoryIcon),
                   category.name,
                 ))

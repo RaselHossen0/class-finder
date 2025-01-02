@@ -43,7 +43,7 @@ class _BodyState extends ConsumerState<Body> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/login'),
+        Uri.parse('https://classroom-api.raselhossen.tech/auth/login'),
         headers: {
           'Content-Type': 'application/json',
           'accept': 'application/json',
@@ -65,7 +65,7 @@ class _BodyState extends ConsumerState<Body> {
           // Store the token in SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
-
+          await ref.read(userDetailsProvider.notifier).fetchUserDetails(token!);
           // Navigate to the next screen
           Navigator.pushReplacement(
             context,
@@ -158,11 +158,6 @@ class _BodyState extends ConsumerState<Body> {
                 press: () async {
                   await login(_emailController.text, _passwordController.text);
                 },
-              ),
-            if (errorMessage != null)
-              Text(
-                loginState.errorMessage!,
-                style: TextStyle(color: Colors.red),
               ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAcountCheck(

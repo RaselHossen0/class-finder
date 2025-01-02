@@ -13,7 +13,7 @@ final createChatProvider =
 });
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   return ChatRepository(
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://classroom-api.raselhossen.tech',
   );
 });
 
@@ -39,7 +39,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
   }
 
   void setupSocket(int chatId) {
-    socket = IO.io('http://localhost:3000', <String, dynamic>{
+    socket = IO.io('https://classroom-api.raselhossen.tech', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       // 'extraHeaders': {'Authorization': 'Bearer YOUR_AUTH_TOKEN'},

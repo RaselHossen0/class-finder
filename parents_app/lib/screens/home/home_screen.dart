@@ -6,6 +6,7 @@ import '../../components/location_widget.dart';
 import '../../main.dart';
 import '../../models/class.dart';
 import '../../providers/class_providers.dart';
+import '../../providers/user_provider.dart';
 import '../class/class_details.dart';
 import 'categories_row.dart';
 import 'class_card.dart';
@@ -27,7 +28,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final pagingController = ref.watch(pagedClassesProvider);
-
+    final user = ref.watch(userDetailsProvider);
+    print(user?.id);
     return Scaffold(
       // Custom App Bar
       appBar: PreferredSize(

@@ -24,7 +24,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
     state = LoginState(isLoading: true, token: null, errorMessage: null);
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/login'),
+        Uri.parse('https://classroom-api.raselhossen.tech/auth/login'),
         headers: {
           'Content-Type': 'application/json',
           'accept': 'application/json',

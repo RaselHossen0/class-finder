@@ -58,7 +58,8 @@ class UserDetailsNotifier extends StateNotifier<UserState?> {
   UserDetailsNotifier() : super(null);
 
   Future<void> fetchUserDetails(String token) async {
-    final url = Uri.parse('http://localhost:3000/auth/user-details');
+    final url =
+        Uri.parse('https://classroom-api.raselhossen.tech/auth/user-details');
 
     try {
       final response = await http.get(

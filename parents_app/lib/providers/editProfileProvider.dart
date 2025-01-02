@@ -45,7 +45,7 @@ class EditProfileNotifier extends StateNotifier<EditProfileState> {
       final token = prefs.getString('token');
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://localhost:3000/auth/edit-profile'),
+        Uri.parse('https://classroom-api.raselhossen.tech/auth/edit-profile'),
       );
       request.headers['Authorization'] = 'Bearer $token';
 

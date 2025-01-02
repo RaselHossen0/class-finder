@@ -15,7 +15,7 @@ final pagedEventsProvider = Provider<PagingController<int, Event>>((ref) {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       final url = Uri.parse(
-        'http://localhost:3000/events?page=$pageKey&limit=3',
+        'https://classroom-api.raselhossen.tech/events?page=$pageKey&limit=3',
       );
 
       final response = await http.get(url, headers: {

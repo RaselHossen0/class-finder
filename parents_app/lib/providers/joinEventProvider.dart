@@ -17,7 +17,8 @@ class JoinEventNotifier extends StateNotifier<AsyncValue<bool>> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     EasyLoading.show(status: 'Joining Event...');
     final token = prefs.getString('token')!;
-    final url = 'http://localhost:3000/events/join/$eventId/$userId';
+    final url =
+        'https://classroom-api.raselhossen.tech/events/join/$eventId/$userId';
     final headers = {
       'accept': '*/*',
       'Authorization': 'Bearer $token',

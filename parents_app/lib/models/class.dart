@@ -33,7 +33,7 @@ class ClassModel {
     final List<Media> medias = json['Media'] != null
         ? List<Media>.from(json['Media'].map((x) => Media.fromJson(x)))
         : [];
-
+    // print(json);
     return ClassModel(
       id: json['id'],
       name: json['name'],
@@ -46,7 +46,7 @@ class ClassModel {
         lat: double.parse(json['coordinates']['coordinates'][0].toString()),
         lng: double.parse(json['coordinates']['coordinates'][1].toString()),
       ),
-      ClassOwnerId: json['ClassOwner']['userId'],
+      ClassOwnerId: json['ClassOwner']['id'],
       media: medias,
     );
   }

@@ -13,6 +13,13 @@ class ReelsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (classModel.media.isEmpty) {
+      return Container(
+        child: Center(
+          child: Text('No reels! Check later'),
+        ),
+      );
+    }
     final videos =
         classModel.media.where((e) => e.type.toLowerCase() == 'reel').toList();
     return Scaffold(

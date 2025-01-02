@@ -13,7 +13,7 @@ class SignupNotifier extends StateNotifier<AsyncValue<String>> {
 
   Future<void> signUp(
       String name, String email, String password, String role) async {
-    final url = Uri.parse('http://localhost:3000/auth/signup');
+    final url = Uri.parse('https://classroom-api.raselhossen.tech/auth/signup');
     print('name: $name, email: $email, password: $password, role: $role');
     state = const AsyncValue.loading();
     try {

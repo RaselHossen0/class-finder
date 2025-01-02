@@ -65,6 +65,12 @@ class LocationNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         'city': city,
         'address': placemarks.first.name,
       });
+      // state = AsyncData({
+      //   'latitude': 37,
+      //   'longitude': 90,
+      //   'city': city,
+      //   'address': placemarks.first.name,
+      // });
     } catch (e, stackTrace) {
       state = AsyncError(e, stackTrace);
     }

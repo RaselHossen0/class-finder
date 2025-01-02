@@ -9,7 +9,6 @@ import 'package:video_player/video_player.dart';
 
 import '../../components/class_info.dart';
 import '../../models/class.dart';
-import '../../providers/user_provider.dart';
 import 'display_gesture.dart';
 
 final selectedIndexProvider1 = StateProvider<int>((ref) => 0);
@@ -38,16 +37,8 @@ class _ClassDetailsScreenState extends ConsumerState<ClassDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userDetailsProvider);
-    final videos = widget.classModel.media
-        .where((e) => e.type.toLowerCase() == 'reel')
-        .toList();
-    final List<Media> photos = widget.classModel.media
-        .where((e) => e.type.toLowerCase() == 'photo')
-        .toList();
     final selectedIndex = ref.watch(selectedIndexProvider1);
-    final coverImage = widget.classModel.media.firstOrNull?.url ??
-        'https://imgmedia.lbb.in/media/2019/03/5c9213c8005a5f60d9912ac5_1553077192080.jpg';
+
     return Scaffold(
       body: selectedIndex == 0
           ? CustomScrollView(
@@ -76,10 +67,11 @@ class _ClassDetailsScreenState extends ConsumerState<ClassDetailsScreen> {
                       fit: StackFit.expand,
                       children: [
                         Image.network(
-                          widget.classModel.media.firstWhere((e) {
-                                return e.isCoverImage;
-                              }).url ??
-                              'https://imgmedia.lbb.in/media/2019/03/5c9213c8005a5f60d9912ac5_1553077192080.jpg',
+                          widget.classModel.media.isNotEmpty
+                              ? widget.classModel.media.firstWhere((e) {
+                                  return e.isCoverImage;
+                                }).url
+                              : 'https://imgmedia.lbb.in/media/2019/03/5c9213c8005a5f60d9912ac5_1553077192080.jpg',
                           fit: BoxFit.cover,
                         ),
                         Container(

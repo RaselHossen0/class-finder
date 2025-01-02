@@ -30,7 +30,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthState(isLoading: true);
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/send-otp'),
+        Uri.parse('https://classroom-api.raselhossen.tech/auth/send-otp'),
         headers: {
           'Content-Type': 'application/json',
           'accept': 'application/json',
@@ -64,7 +64,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/change-password'),
+        Uri.parse(
+            'https://classroom-api.raselhossen.tech/auth/change-password'),
         headers: {
           'Content-Type': 'application/json',
           'accept': 'application/json',

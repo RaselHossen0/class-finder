@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:class_finder/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   final token = await prefs.getString('token');
   const url =
-      'http://localhost:3000/categories'; // Replace with your actual API URL
+      'https://classroom-api.raselhossen.tech/categories'; // Replace with your actual API URL
   final response = await http.get(Uri.parse(url), headers: {
     'Authorization': 'Bearer $token',
   });
@@ -33,7 +34,9 @@ class Category {
     return Category(
       id: json['id'],
       name: json['name'],
-      logo: json['logo'], // Assuming the logo URL comes from the API
+      logo: frontEndUrl +
+          "/" +
+          json['logo'], // Assuming the logo URL comes from the API
     );
   }
 }
