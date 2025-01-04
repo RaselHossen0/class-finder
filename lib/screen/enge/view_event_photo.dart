@@ -18,27 +18,28 @@ class _SliderMineState extends State<SliderMine> {
       child: widget.photos.isEmpty
           ? Center(child: Text("No photos available"))
           : CarouselSlider.builder(
-          itemCount: widget.photos.length,
-          options: CarouselOptions(
-            height: 300, // Adjust height as needed
-            autoPlay: true,
-            autoPlayInterval: Duration(seconds: 3),
-            viewportFraction: 1.0, // Show one item at a time
-            enableInfiniteScroll: widget.photos.length > 1,
-        ),
-        itemBuilder: (context, index, realIndex) {
-          return Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: NetworkImage(widget.photos[index]["url"]),
-                fit: BoxFit.cover,
+              itemCount: widget.photos.length,
+              options: CarouselOptions(
+                height: 300, // Adjust height as needed
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 3),
+                viewportFraction: 1.0, // Show one item at a time
+                enableInfiniteScroll: widget.photos.length > 1,
               ),
+              itemBuilder: (context, index, realIndex) {
+                // print(widget.photos[index]["url"]);
+                return Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                      image: NetworkImage(widget.photos[index]["url"]),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

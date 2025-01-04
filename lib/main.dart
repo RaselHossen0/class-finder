@@ -1,6 +1,4 @@
 import 'package:class_rasel/componants/buttomNavBar.dart';
-import 'package:class_rasel/every%20class/user.dart';
-import 'package:class_rasel/initialze.dart';
 import 'package:class_rasel/screen/create_event.dart';
 import 'package:class_rasel/screen/enge.dart';
 import 'package:class_rasel/screen/enge/event_show.dart';
@@ -19,20 +17,19 @@ import 'iniApp.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(cont());// Ensures Flutter bindings are initialized
+  Get.put(cont()); // Ensures Flutter bindings are initialized
   await GetStorage.init(); // Initialize GetStorage
   await initializeApp(); // Call the custom initialization function
-   // Register the controller
+  // Register the controller
   runApp(MyApp());
 }
-
-
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -41,7 +38,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/', page: () => SplashScreen()),
         GetPage(name: '/Loader', page: () => BottomNavBar()),
         GetPage(name: '/SignUp', page: () => Signup()),
-        GetPage(name: '/LogIn', page: ()=> LoginScreen()),
+        GetPage(name: '/LogIn', page: () => LoginScreen()),
         GetPage(
           name: '/Enge/:id',
           page: () {
@@ -53,7 +50,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/SecondSignUp', page: () => SecondPageForOwner()),
         GetPage(name: '/thirdSignUp', page: () => ThPage()),
         GetPage(name: '/CreateEvent', page: () => CreateEvent()),
-        GetPage(name: '/EventShow', page:() => EventShow()),
+        GetPage(name: '/EventShow', page: () => EventShow()),
       ],
       builder: EasyLoading.init(), // Initialize EasyLoading
     );
