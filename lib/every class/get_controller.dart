@@ -6,5 +6,9 @@ class cont extends GetxController {
 
   late String token;
   late User user;
+  int? classId;
+  int? userId;
+  int? curretEventId;
+  bool logInState=false;
 
 }

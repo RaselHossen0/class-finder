@@ -1,18 +1,28 @@
 import 'package:class_rasel/Global.dart';
 import 'package:dio/dio.dart';
 
-signupService(String name, String email, String pass) async {
-  var dio = Dio();
-  print("           11111            ");
+import 'package:dio/dio.dart';
+import 'package:class_rasel/Global.dart';
+
+signup(String firstName,String email,String pass, String role) async {
+  Dio dio = Dio();
+
+  // Define the API URL
+   String apiUrl = '$rootApi/auth/signup';
+
+  // Define the request payload
+  Map<String, dynamic> data = {
+    "name": firstName,
+    "email": email,
+    "password": pass,
+    "role": role
+  };
+
   try {
-    var response = await dio.post(
-      '$rootApi/auth/signup',
-      data: {
-        'name': name,
-        'email': email,
-        'password': pass,
-        'role': 'class_owner',
-      },
+    // Send the POST request
+    Response response = await dio.post(
+      apiUrl,
+      data: data,
       options: Options(
         headers: {
           'accept': 'application/json',
@@ -21,10 +31,12 @@ signupService(String name, String email, String pass) async {
       ),
     );
 
-    print('Response: ${response.data}');
+    // Print response
+    print('Response status: ${response.statusCode}');
+    print('Response data: ${response.data}');
     return response;
   } catch (e) {
+    // Handle errors
     print('Error: $e');
-    return null;
   }
 }

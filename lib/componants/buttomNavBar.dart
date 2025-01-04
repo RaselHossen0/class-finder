@@ -4,6 +4,8 @@ import 'package:class_rasel/screen/home.dart';
 import 'package:class_rasel/screen/settings.dart';
 import 'package:flutter/material.dart';
 
+import '../screen/chat/chat_history_screen.dart';
+
 class BottomNavBar extends StatefulWidget {
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
@@ -15,7 +17,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _screens = [
     HomePage(),
     Enge(initialIndex: 0),
-    MyClasses(),
+    ChatHistoryScreen(),
     Settings(),
   ];
 

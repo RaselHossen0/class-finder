@@ -23,21 +23,27 @@ class _VideoCardState extends State<VideoCard> {
   }
 
   Future<void> _initializePlayer() async {
-    _videoPlayerController = VideoPlayerController.network(widget.video.url);
+    try {
+      _videoPlayerController = VideoPlayerController.network(widget.video.url);
 
-    await _videoPlayerController.initialize();
+      await _videoPlayerController.initialize();
 
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-    );
+      _chewieController = ChewieController(
+        videoPlayerController: _videoPlayerController,
+        autoPlay: true,
+        looping: true,
+      );
 
-    setState(() {});
+      setState(() {}); // Update UI after initializing
+    } catch (error) {
+      // Handle initialization errors here
+      debugPrint("Error initializing video player: $error");
+    }
   }
 
   @override
   void dispose() {
+    // Dispose of controllers to free up resources
     _videoPlayerController.dispose();
     _chewieController.dispose();
     super.dispose();
@@ -46,15 +52,15 @@ class _VideoCardState extends State<VideoCard> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Card(
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Color.fromARGB(255, 250, 196, 61),
-            width: 1.0
+            color: const Color.fromARGB(255, 250, 196, 61),
+            width: 1.0,
           ),
           borderRadius: BorderRadius.circular(8.0),
-
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,19 +69,17 @@ class _VideoCardState extends State<VideoCard> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.video.caption,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            // Wrap the Chewie widget with a Container that has proper size
             _videoPlayerController.value.isInitialized
                 ? Container(
-
-              height: 450,  // Set a fixed height
-              width: screenWidth * 0.8,  // Ensure the width is constrained
+              height: 450, // Set a fixed height
+              width: screenWidth * 0.8, // Ensure the width is constrained
               child: Chewie(controller: _chewieController),
             )
-                : Center(child: CircularProgressIndicator()),
-            SizedBox(height: 8,)
+                : const Center(child: CircularProgressIndicator()),
+            const SizedBox(height: 8),
           ],
         ),
       ),

@@ -1,7 +1,10 @@
 import 'package:class_rasel/componants/buttomNavBar.dart';
+import 'package:class_rasel/every%20class/get_controller.dart';
 import 'package:class_rasel/screen/home.dart';
 import 'package:class_rasel/screen/login/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,14 +13,17 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  final cont sp=Get.find();
   void initState() {
     super.initState();
     // Delay for 3 seconds, then navigate to HomePage
     Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+      if(sp.logInState==true){
+        Get.offNamed("/Loader");
+      }
+      else{
+        Get.offNamed("/LogIn");
+      }
     });
   }
 

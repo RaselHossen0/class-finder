@@ -25,7 +25,7 @@ class _ReelsState extends State<Reels> {
   List<VideoData> vd = [];
   bool _isLoading = true;
 
-  List<Widget> cad=[];
+  List<Widget> cad = [];
 
   @override
   void initState() {
@@ -40,14 +40,21 @@ class _ReelsState extends State<Reels> {
         caption: "Video ${i + 1}",
         videoId: "${i + 1}",
       );
-      Widget all=VideoCard(video: videoData);
+      Widget all = VideoCard(video: videoData);
       vd.add(videoData);
       cad.add(all);
     }
     setState(() {
       _isLoading = false;
     });
+  }
 
+  @override
+  void dispose() {
+    // Clear lists to free up memory
+    vd.clear();
+    cad.clear();
+    super.dispose();
   }
 
   @override
@@ -56,47 +63,41 @@ class _ReelsState extends State<Reels> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-
-
-        Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 10),
-                  Text(
-                    "Create Reels",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Text(
+                          "Create Reels",
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      add,
+                      width: 20,
+                      height: 20,
+                    ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10),
-              child: SvgPicture.asset(
-                add,
-                width: 20,
-                height: 20,
-              ),
+              padding: const EdgeInsets.all(8.0),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(children: cad),
             ),
-          ],
-        ),
-      ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                  children: cad
-                )
-              ),
-
           ],
         ),
       ),

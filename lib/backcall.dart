@@ -19,7 +19,7 @@ LoginService(String email,String pass) async {
   try {
     //print("          1111111         ");
     Response response = await dio.post(
-      'http://10.0.2.2:3000/auth/login',
+      '$rootApi/auth/login',
       data: data,
       options: Options(
         headers: {

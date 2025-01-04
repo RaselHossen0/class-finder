@@ -1,95 +1,86 @@
-import 'package:class_rasel/componants/app_bar.dart';
+
+import 'dart:io';
+
+import 'package:class_rasel/create_event_service.dart';
+import 'package:class_rasel/every%20class/get_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../every class/get_controller.dart';
-import 'compleate_signup.dart';
+import '../componants/app_bar.dart';
 
+LatLng gett=LatLng(0, 0);
 
-LatLng gett = LatLng(0, 0);
-
-class ThPage extends StatefulWidget {
-  const ThPage({super.key});
+class CreateEvent extends StatefulWidget {
+  const CreateEvent({super.key});
 
   @override
-  State<ThPage> createState() => _ThPageState();
+  State<CreateEvent> createState() => _CreateEventState();
 }
 
-class _ThPageState extends State<ThPage> {
-  final _className = TextEditingController();
-  final cont signUp = Get.find();
+class _CreateEventState extends State<CreateEvent> {
+  final _title = TextEditingController();
   final _description = TextEditingController();
+  final _dateController = TextEditingController();
+  final _searchLocation=TextEditingController();
   LatLng markerLocation = LatLng(23.8041, 90.4152);
-  final _searchLocation = TextEditingController();
+  final cont creatEv = Get.find();
   bool locationNodal = false;
-  bool isLoading = false;
-  //LatLng gett=LatLng(0, 0);
-  List<dynamic> options = [];
-  List<String> optionsName = [];
-  int changeId = 0;
-  Map<String, int> aluu = Map();
-  String? _selectOption;
-  bool kajShesh = false;
-  void initState() {
-    super.initState();
-    _initializeData();
-    //optionToString();
+  final List<File> _selectedImages = []; // List to hold selected images
+  bool isLoading=false;
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _description.dispose();
+    _dateController.dispose();
+    super.dispose();
   }
 
-// Create an async helper function
-  Future<void> _initializeData() async {
-    print("Fetching categories...");
-    try {
-      var result = await fetchCategories();
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
       setState(() {
-        options = result.data;
-        optionToString();
-        _selectOption = optionsName[0];
-        kajShesh = true;
+        _dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
       });
-      print("Categories fetched successfully: $options");
-    } catch (e) {
-      print("Error fetching categories: $e");
     }
   }
 
-  Future<void> optionToString() async {
-    try {
-      for (int i = 0; i < options.length; i++) {
-        optionsName.add(options[i]['name']);
+  Future<void> _pickImages() async {
+    final ImagePicker picker = ImagePicker();
+    final List<XFile>? pickedFiles = await picker.pickMultiImage();
 
-        aluu[options[i]['name']] = options[i]['id'];
-      }
-
-      print(optionsName);
-      print(aluu["String"]);
-    } catch (e) {
-      print("11111                    11111111          ");
-      print(e);
-      print(optionsName);
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      setState(() {
+        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+      });
     }
-  }
-
-  ChangeIdnunu(String putki) {
-    changeId = aluu[putki]!;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (kajShesh) {
-      return Scaffold(
-        body: SafeArea(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   appBar(title: "Third Page For Owner"),
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -97,7 +88,7 @@ class _ThPageState extends State<ThPage> {
                     ],
                   ),
                   TextFormField(
-                    controller: _className,
+                    controller: _title,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -116,46 +107,58 @@ class _ThPageState extends State<ThPage> {
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                      Text('Select an Option', style: TextStyle(fontSize: 14)),
+                    children: [
+                      Text('Description', style: TextStyle(fontSize: 14)),
                     ],
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: DropdownMenu<String>(
-                      width: double.infinity,
-                      initialSelection: optionsName[0],
-                      dropdownMenuEntries: optionsName.map((String option) {
-                        return DropdownMenuEntry(
-                          value: option,
-                          label: option,
-                        );
-                      }).toList(),
-                      onSelected: (String? newValue) {
-                        setState(() {
-                          _selectOption = newValue;
-                          ChangeIdnunu(_selectOption!);
-                        });
-                      },
-                      inputDecorationTheme: InputDecorationTheme(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.orange),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                  TextFormField(
+                    controller: _description,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.orange),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Select Date', style: TextStyle(fontSize: 14)),
+                    ],
                   ),
+                  TextFormField(
+                    controller: _dateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () => _selectDate(context),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.orange),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -191,29 +194,42 @@ class _ThPageState extends State<ThPage> {
                   ),
                   SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Descriptions', style: TextStyle(fontSize: 14)),
+                      Text('Select Photos', style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      ElevatedButton(
+                        onPressed: _pickImages,
+                        child: Text('Pick Images'),
+                      ),
                     ],
                   ),
-                  TextFormField(
-                    controller: _description,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.orange),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  SizedBox(height: 8),
+                  // Display selected images
+                  _selectedImages.isNotEmpty
+                      ? SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _selectedImages.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Image.file(
+                            _selectedImages[index],
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                      : Center(
+                    child: Text(
+                      'No images selected',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
-                  SizedBox(height: 16),
                 ],
               ),
               SizedBox(
@@ -222,62 +238,49 @@ class _ThPageState extends State<ThPage> {
                   onPressed: isLoading
                       ? null // Disable button if loading
                       : () async {
-                          setState(() {
-                            isLoading = true;
-                          });
+                    setState(() {
+                      isLoading = true;
+                    });
 
-                          EasyLoading.show(
-                              status: 'Logging in...'); // Show loading
+                    print("                      999999999           ");
 
-                          try {
-                            signUp.user.className = _className.text;
-                            signUp.user.category = changeId;
-                            signUp.user.locationName = _searchLocation.text;
-                            //print("11111             11111       asda");
-                            print(gett);
+                    EasyLoading.show(
+                        status: 'Logging in...'); // Show loading
 
-                            List<double> aluKhor = [
-                              gett.latitude,
-                              gett.longitude
-                            ];
-                            signUp.user.latLang = aluKhor;
-                            print(aluKhor);
-                            signUp.user.description = _description.text;
-                            //print("11111             11111       asda");
+                    try {
+                      print(" get             token");
+                      print(creatEv.token);
+                      print("                 9999999999            ");
 
-                            // print(signUp.user.photo);
-                            // print(signUp.user.aadharCardFile);
-                            //
-                            // print(signUp.user.panCardFile);
-
-                            var result = await completeSignup(signUp.user);
-
-                            print(result);
-
-                            signUp.user.aadharCardFile=result["classOwner"]["aadhaarCardFile"];
-                            signUp.user.panCardFile=result["classOwner"]["panCardFile"];
-                            signUp.user.photo=result["classOwner"]["photographFile"];
-
-                            if(result["error"]==0){
-                              Get.toNamed("/Loader");
-                            }
+                      String latLngString = '${gett.latitude.toString()},${gett.longitude.toString()}';
 
 
-                            print(result);
-                          } catch (e) {
-                            // Handle network or API errors
-                            print("Error: $e");
+                      print("                 9999999999            ");
+                      print(creatEv.token);
+                      var result = await createEvent(_title.text, _dateController.text, _description.text, creatEv.classId!, latLngString, _selectedImages,creatEv.token);
 
-                            EasyLoading.showError(
-                                'An error occurred. Please try again.');
-                          } finally {
-                            setState(() {
-                              isLoading = false;
-                            });
-                            EasyLoading
-                                .dismiss(); // Hide loading after response
-                          }
-                        },
+                      if (result != null && result.statusCode == 201) {
+                        Get.offNamed("/Enge/:2");
+                      } else {
+                        // Handle unexpected null response or other status codes
+                        EasyLoading.showError('Unexpected error occurred. Please try again.');
+                      }
+
+
+                    } catch (e) {
+                      // Handle network or API errors
+                      print("Error: $e");
+
+                      EasyLoading.showError(
+                          'An error occurred. Please try again.');
+                    } finally {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      EasyLoading
+                          .dismiss(); // Hide loading after response
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Color.fromARGB(255, 15, 98, 233),
@@ -289,18 +292,16 @@ class _ThPageState extends State<ThPage> {
                   child: isLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          'Sign Up as Class Owner',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
+                    'Sign Up as Class Owner',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
                 ),
               ),
             ],
           ),
-        )),
-      );
-    } else {
-      return CircularProgressIndicator();
-    }
+        ),
+      ),
+    );
   }
 }
 
@@ -356,7 +357,7 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
 
                           try {
                             locations =
-                                await locationFromAddress(searchLocation.text);
+                            await locationFromAddress(searchLocation.text);
                           } catch (e) {
                             print("              1111111111              ");
                             print(e);
@@ -364,7 +365,7 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
                           if (locations.isNotEmpty) {
                             Location location = locations.first;
                             LatLng newLatLng =
-                                LatLng(location.latitude, location.longitude);
+                            LatLng(location.latitude, location.longitude);
                             gett = newLatLng;
                             print(setLatLang);
 
@@ -381,7 +382,7 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
                                   markerId: MarkerId('searched_marker'),
                                   position: newLatLng,
                                   infoWindow:
-                                      InfoWindow(title: searchLocation.text),
+                                  InfoWindow(title: searchLocation.text),
                                 ),
                               };
                             });
@@ -422,32 +423,32 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
                     onPressed: showModal
                         ? null // Disable button if loading
                         : () async {
-                            setState(() {
-                              showModal = true;
-                            });
+                      setState(() {
+                        showModal = true;
+                      });
 
-                            EasyLoading.show(
-                                status: 'Logging in...'); // Show loading
+                      EasyLoading.show(
+                          status: 'Logging in...'); // Show loading
 
-                            try {
-                              await Future.delayed(
-                                  Duration(seconds: 2)); // Simulate API call
+                      try {
+                        await Future.delayed(
+                            Duration(seconds: 2)); // Simulate API call
 
-                              Navigator.pop(context);
-                            } catch (e) {
-                              // Handle network or API errors
-                              print("Error: $e");
+                        Navigator.pop(context);
+                      } catch (e) {
+                        // Handle network or API errors
+                        print("Error: $e");
 
-                              EasyLoading.showError(
-                                  'An error occurred. Please try again.');
-                            } finally {
-                              setState(() {
-                                showModal = false;
-                              });
-                              EasyLoading
-                                  .dismiss(); // Hide loading after response
-                            }
-                          },
+                        EasyLoading.showError(
+                            'An error occurred. Please try again.');
+                      } finally {
+                        setState(() {
+                          showModal = false;
+                        });
+                        EasyLoading
+                            .dismiss(); // Hide loading after response
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Color.fromARGB(255, 15, 98, 233),
@@ -459,9 +460,9 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
                     child: showModal
                         ? CircularProgressIndicator(color: Colors.white)
                         : Text(
-                            'Sign Up as Class Owner',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
+                      'Sign Up as Class Owner',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
                   ),
                 ),
               ],
@@ -472,3 +473,4 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
     ),
   );
 }
+

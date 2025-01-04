@@ -130,8 +130,7 @@ class _SignupState extends State<Signup> {
                                       'Please fill all fields');
                                   return; // Prevent signup if fields are empty
                                 }
-                                var result = await signupService(
-                                    _name.text, _email.text, _pass.text);
+                                var result = await signup(_name.text, _email.text, _pass.text, "user");
 
                                 if (result.statusCode == 200) {
                                   box.write('token', result.data["token"]);
@@ -195,8 +194,8 @@ class _SignupState extends State<Signup> {
 
                               EasyLoading.show(status: 'Signing up...');
                               try {
-                                var result = await signupService(
-                                    _name.text, _email.text, _pass.text);
+                                var result = await signup(
+                                    _name.text, _email.text, _pass.text,"class_owner");
                                 if (result == null) {
                                   EasyLoading.showError(
                                       'An error occurred. Please try again.');

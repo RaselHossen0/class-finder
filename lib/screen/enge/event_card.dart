@@ -1,5 +1,11 @@
+
+import 'package:class_rasel/every%20class/get_controller.dart';
 import 'package:class_rasel/screen/enge/event_data.dart';
+import 'package:class_rasel/screen/enge/view_event_photo.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatefulWidget {
   final EventData event;
@@ -10,6 +16,31 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
+
+  late String date;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initDate(widget.event.date);
+  }
+   initDate(String timestamp) {
+    try {
+      // Parse the timestamp into a DateTime object
+      DateTime parsedDate = DateTime.parse(timestamp);
+
+      // Create a DateFormat instance with your desired format
+      DateFormat formatter = DateFormat("d MMMM EEEE h:mm a");
+
+      // Format the date and return it
+      date=formatter.format(parsedDate);
+    } catch (e) {
+      // Handle errors, such as invalid timestamp format
+      "Invalid date";
+    }
+  }
+  final cont eventCard = Get.find();
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -21,7 +52,8 @@ class _EventCardState extends State<EventCard> {
           ),
           child: GestureDetector(
             onTap: () {
-              // Handle tap event here
+              eventCard.curretEventId=widget.event.eventId;
+              Get.toNamed("/EventShow");
             },
             child: Container(
               width: constraints.maxWidth * 0.7, // 70% of available width
@@ -49,11 +81,13 @@ class _EventCardState extends State<EventCard> {
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
                             ),
-                            image: DecorationImage(
-                              image: NetworkImage(widget.event.eventImg),
-                              fit: BoxFit.cover,
-                            ),
+                            // image: DecorationImage(
+                            //   image: NetworkImage(widget.event.eventImg),
+                            //   fit: BoxFit.cover,
+                            // ),
+
                           ),
+                          child: SliderMine(photos: widget.event.eventImg),
                         ),
                         Positioned(
                           top: 16,
@@ -66,7 +100,7 @@ class _EventCardState extends State<EventCard> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              widget.event.date,
+                              date,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -109,24 +143,24 @@ class _EventCardState extends State<EventCard> {
                                   ),
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  'Wants Join',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 16,
+                              //     vertical: 8,
+                              //   ),
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.black,
+                              //     borderRadius: BorderRadius.circular(20),
+                              //   ),
+                              //   child: const Text(
+                              //     'Wants Join',
+                              //     style: TextStyle(
+                              //       color: Colors.white,
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.w500,
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                           const SizedBox(height: 8),

@@ -1,4 +1,6 @@
 import 'package:class_rasel/backcall.dart';
+import 'package:class_rasel/every%20class/get_controller.dart';
+import 'package:class_rasel/iniApp.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,7 +15,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  final box = GetStorage(); // Storage for storing the token
+  final box = GetStorage();
+
+  // final cont // Storage for storing the token
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +115,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         response.data['token'] != null) {
 
                       box.write('token', response.data["token"]);
+
+                      print("                                 22222222              ");
+                      print(response.data["token"]);
+
+                      await initializeApp();
+
 
 
                       EasyLoading.showSuccess('Login Successful'); // Show success message

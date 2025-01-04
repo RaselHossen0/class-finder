@@ -60,9 +60,10 @@ completeSignup(User us) async {
     );
 
     // Handle response
+    print(formData);
     print('Response status: ${response.statusCode}');
     print('Response data: ${response.data}');
-    return response;
+    return response.data;
   } catch (e) {
     // Handle errors
     print('Error: $e');
