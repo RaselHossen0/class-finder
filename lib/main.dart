@@ -3,7 +3,9 @@ import 'package:class_rasel/every%20class/user.dart';
 import 'package:class_rasel/initialze.dart';
 import 'package:class_rasel/screen/create_event.dart';
 import 'package:class_rasel/screen/enge.dart';
+import 'package:class_rasel/screen/enge/create_reels.dart';
 import 'package:class_rasel/screen/enge/event_show.dart';
+import 'package:class_rasel/screen/enge/video_show.dart';
 import 'package:class_rasel/screen/login/login_screen.dart';
 import 'package:class_rasel/screen/splash.dart';
 import 'package:class_rasel/signup/second_page_for_owner.dart';
@@ -54,6 +56,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/thirdSignUp', page: () => ThPage()),
         GetPage(name: '/CreateEvent', page: () => CreateEvent()),
         GetPage(name: '/EventShow', page:() => EventShow()),
+        GetPage(name: '/ReelDt', page: ()=> VideoDetailPage()),
+        GetPage(name: '/CreateReels', page: () => CreateReels()),
       ],
       builder: EasyLoading.init(), // Initialize EasyLoading
     );

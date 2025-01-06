@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../componants/app_bar.dart';
 
-LatLng gett=LatLng(0, 0);
+LatLng gett=LatLng(23.8041, 90.4152);
 
 class CreateEvent extends StatefulWidget {
   const CreateEvent({super.key});
@@ -185,9 +185,10 @@ class _CreateEventState extends State<CreateEvent> {
                             color: Colors.orange), // Location icon
                         onPressed: () {
                           // Perform action when button is pressed
-                          DisplayLocationSelector(context, markerLocation,
-                              _searchLocation, locationNodal, gett);
-                        },
+
+                          displayLocationSelector(context, gett,
+                              _searchLocation);
+                        }
                       ),
                       hintText: 'Enter location',
                     ),
@@ -305,165 +306,153 @@ class _CreateEventState extends State<CreateEvent> {
   }
 }
 
-Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
-    TextEditingController searchLocation, bool showModal, LatLng setLatLang) {
-  // Variable to hold the GoogleMapController
-  GoogleMapController? mapController;
 
-  // Marker to dynamically update
-  Set<Marker> marker = {
+Future<LatLng?> displayLocationSelector(
+    BuildContext context,
+    LatLng initialLatLng,
+    TextEditingController searchLocationController,
+    ) async {
+  GoogleMapController? mapController;
+  LatLng currentLatLng = initialLatLng;
+
+  Set<Marker> markers = {
     Marker(
       markerId: MarkerId('initial_marker'),
-      position: initialLt,
-      infoWindow: InfoWindow(title: 'Initial Location'),
+      position: initialLatLng,
+      infoWindow: InfoWindow(title: 'Selected Location'),
     ),
   };
 
-  return showModalBottomSheet(
+  // Initialize the searchLocationController with the name of the initial location
+  try {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      initialLatLng.latitude,
+      initialLatLng.longitude,
+    );
+    if (placemarks.isNotEmpty) {
+      searchLocationController.text =
+      "${placemarks.first.name}, ${placemarks.first.locality}";
+    }
+  } catch (e) {
+    searchLocationController.text = "Unknown Location";
+  }
+
+  return await showModalBottomSheet<LatLng>(
     isScrollControlled: true,
     context: context,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
     ),
     builder: (context) => StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
+      builder: (context, setState) {
         return SizedBox(
-          height: 800,
+          height: MediaQuery.of(context).size.height * 0.8,
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Search Location Field
                 TextFormField(
-                  controller: searchLocation,
+                  controller: searchLocationController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    hintText: 'Search location',
                     suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
                       onPressed: () async {
-                        try {
-                          // Fetch location coordinates
-                          List<Location> locations = [];
-
+                        String query = searchLocationController.text.trim();
+                        if (query.isNotEmpty) {
                           try {
-                            locations =
-                            await locationFromAddress(searchLocation.text);
-                          } catch (e) {
-                            print("              1111111111              ");
-                            print(e);
-                          }
-                          if (locations.isNotEmpty) {
-                            Location location = locations.first;
-                            LatLng newLatLng =
-                            LatLng(location.latitude, location.longitude);
-                            gett = newLatLng;
-                            print(setLatLang);
+                            List<Location> locations =
+                            await locationFromAddress(query);
+                            if (locations.isNotEmpty) {
+                              Location location = locations.first;
+                              LatLng newLatLng = LatLng(
+                                location.latitude,
+                                location.longitude,
+                              );
 
-                            // Update the camera position
-                            if (mapController != null) {
-                              mapController!.animateCamera(
-                                  CameraUpdate.newLatLng(newLatLng));
+                              setState(() {
+                                currentLatLng = newLatLng;
+                                markers = {
+                                  Marker(
+                                    markerId: MarkerId('searched_marker'),
+                                    position: newLatLng,
+                                    infoWindow: InfoWindow(title: query),
+                                  ),
+                                };
+                              });
+
+                              mapController?.animateCamera(
+                                CameraUpdate.newLatLng(newLatLng),
+                              );
                             }
-
-                            // Update marker on the map
-                            setState(() {
-                              marker = {
-                                Marker(
-                                  markerId: MarkerId('searched_marker'),
-                                  position: newLatLng,
-                                  infoWindow:
-                                  InfoWindow(title: searchLocation.text),
-                                ),
-                              };
-                            });
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Location not found!')),
+                            );
                           }
-                        } catch (e) {
-                          // Handle errors (e.g., invalid address)
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Location not found!')),
-                          );
                         }
                       },
-                      icon: Icon(Icons.search),
                     ),
                   ),
                 ),
                 SizedBox(height: 16),
-                // Google Map
-                SizedBox(
-                  height: 600,
+                Expanded(
                   child: GoogleMap(
-                    onMapCreated: (GoogleMapController cnt) {
-                      // Save the controller directly
-                      mapController = cnt;
+                    onMapCreated: (controller) {
+                      mapController = controller;
                     },
                     initialCameraPosition: CameraPosition(
-                      target: initialLt,
-                      zoom: 17,
+                      target: initialLatLng,
+                      zoom: 15,
                     ),
-                    markers: marker,
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: showModal
-                        ? null // Disable button if loading
-                        : () async {
+                    markers: markers,
+                    onTap: (LatLng tappedPosition) async {
                       setState(() {
-                        showModal = true;
+                        currentLatLng = tappedPosition;
+                        markers = {
+                          Marker(
+                            markerId: MarkerId('tapped_marker'),
+                            position: tappedPosition,
+                            infoWindow: InfoWindow(title: 'Selected Location'),
+                          ),
+                        };
                       });
 
-                      EasyLoading.show(
-                          status: 'Logging in...'); // Show loading
-
+                      // Reverse geocode to get the address of the tapped position
                       try {
-                        await Future.delayed(
-                            Duration(seconds: 2)); // Simulate API call
-
-                        Navigator.pop(context);
+                        List<Placemark> placemarks =
+                        await placemarkFromCoordinates(
+                          tappedPosition.latitude,
+                          tappedPosition.longitude,
+                        );
+                        if (placemarks.isNotEmpty) {
+                          setState(() {
+                            searchLocationController.text =
+                            "${placemarks.first.name}, ${placemarks.first.locality}";
+                          });
+                        }
                       } catch (e) {
-                        // Handle network or API errors
-                        print("Error: $e");
-
-                        EasyLoading.showError(
-                            'An error occurred. Please try again.');
-                      } finally {
-                        setState(() {
-                          showModal = false;
-                        });
-                        EasyLoading
-                            .dismiss(); // Hide loading after response
+                        searchLocationController.text = "Unknown Location";
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color.fromARGB(255, 15, 98, 233),
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: showModal
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                      'Sign Up as Class Owner',
-                      style: TextStyle(fontSize: 16.0),
+                  ),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, currentLatLng);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                  child: Text('Confirm Location'),
                 ),
               ],
             ),
@@ -473,4 +462,3 @@ Future DisplayLocationSelector(BuildContext context, LatLng initialLt,
     ),
   );
 }
-

@@ -5,7 +5,7 @@ import 'package:class_rasel/screen/enge/reels.dart';
 import 'package:flutter/material.dart';
 
 class Enge extends StatefulWidget {
-  final int initialIndex; // Add an initialIndex parameter to the constructor
+  final int initialIndex;
 
   const Enge({super.key, required this.initialIndex});
 
@@ -19,39 +19,39 @@ class _EngeState extends State<Enge> {
   @override
   void initState() {
     super.initState();
-    ind = widget.initialIndex; // Initialize ind from the passed parameter
-    print("              1               ");
-    print(ind);
+    ind = widget.initialIndex; // Initialize the selected index
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            appBar(title: 'Engagement Tool'), // Custom AppBar widget
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              appBar(title: 'Engagement Tool'), // Custom AppBar widget
 
-            ButtonRow2(
-              ind: ind,
-              onIndexChanged: (value) {
-                setState(() {
-                  ind = value; // Trigger rebuild when index changes
-                });
-              },
-            ),
+              ButtonRow2(
+                ind: ind,
+                onIndexChanged: (value) {
+                  setState(() {
+                    ind = value; // Update index on tab switch
+                  });
+                },
+              ),
 
-            SizedBox(
-              height: 8,
-            ),
+              const SizedBox(height: 8),
 
-            if (ind == 0) Reels(),
-            if(ind == 2) Events(),
-          ],
+              // Display widgets conditionally
+              if (ind == 0)
+                const Reels(), // Reels widget is automatically disposed when removed
+              if (ind == 2)
+                const Events(), // Events widget
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }

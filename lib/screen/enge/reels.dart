@@ -1,7 +1,11 @@
+import 'package:class_rasel/every%20class/get_controller.dart';
+import 'package:class_rasel/screen/enge/reels_service.dart';
 import 'package:class_rasel/screen/enge/video_card.dart';
 import 'package:class_rasel/screen/enge/video_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../../Global.dart';
 
@@ -13,47 +17,61 @@ class Reels extends StatefulWidget {
 }
 
 class _ReelsState extends State<Reels> {
-  final List<String> videoUrls = [
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-  ];
-
-  List<VideoData> vd = [];
-  bool _isLoading = true;
-
-  List<Widget> cad = [];
+  late List<dynamic> videoUrls = [];
+  final List<VideoData> videoDataList = [];
+  final List<Widget> videoCards = [];
+  final cont reels = Get.find();
 
   @override
   void initState() {
     super.initState();
-    initVideo();
+    _initializeReels();
   }
 
-  void initVideo() async {
-    for (int i = 0; i < videoUrls.length; i++) {
-      VideoData videoData = VideoData(
-        url: videoUrls[i],
-        caption: "Video ${i + 1}",
-        videoId: "${i + 1}",
-      );
-      Widget all = VideoCard(video: videoData);
-      vd.add(videoData);
-      cad.add(all);
+  Future<void> _initializeReels() async {
+    EasyLoading.show(status: 'Loading...');
+    try {
+      await _getVideo();
+      _initializeVideos();
+    } catch (e) {
+      print("Error in initializing reels: $e");
+      EasyLoading.showError("Failed to load reels");
+    } finally {
+      EasyLoading.dismiss();
     }
-    setState(() {
-      _isLoading = false;
-    });
+  }
+
+  Future<void> _getVideo() async {
+    try {
+      var result = await fetchClassDetails(reels.token, reels.classId!);
+      videoUrls = result.data["Media"] ?? [];
+    } catch (e) {
+      print("Error in fetching video URLs: $e");
+    }
+  }
+
+  void _initializeVideos() {
+    for (int i = 0; i < videoUrls.length; i++) {
+      final videoData = VideoData(
+        url: videoUrls[i]["url"],
+        caption: videoUrls[i]["title"],
+        videoId: videoUrls[i]["id"],
+        des: videoUrls[i]["description"],
+        date: videoUrls[i]["upload_date"],
+      );
+
+      videoDataList.add(videoData);
+      videoCards.add(VideoCard(video: videoData));
+    }
+
+    setState(() {}); // Trigger UI update
   }
 
   @override
   void dispose() {
-    // Clear lists to free up memory
-    vd.clear();
-    cad.clear();
+    // Clear video lists to free memory
+    videoDataList.clear();
+    videoCards.clear();
     super.dispose();
   }
 
@@ -63,40 +81,50 @@ class _ReelsState extends State<Reels> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            // Header Row
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Text(
-                          "Create Reels",
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      const Text(
+                        "Create Reels",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      add,
-                      width: 20,
-                      height: 20,
+                  GestureDetector(
+                    onTap: (){
+                      Get.toNamed("/CreateReels");
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(
+                        add,
+                        width: 20,
+                        height: 20,
+                        semanticsLabel: 'Add Reel',
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Video List or Loader
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(children: cad),
+              child: videoUrls.isEmpty
+                  ? const Center(
+                child: Text(
+                  "No videos found.",
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
+                  : Column(children: videoCards),
             ),
           ],
         ),

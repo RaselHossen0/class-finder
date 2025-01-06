@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 
 fetchChatHistoryData(int userId) async {
   final dio = Dio();
-
+  print('user id: $userId');
   try {
     final response = await dio.get(
       '$rootApi/chats/user/$userId',

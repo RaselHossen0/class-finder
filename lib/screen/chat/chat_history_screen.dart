@@ -1,58 +1,21 @@
 import 'package:class_rasel/Global.dart';
-import 'package:class_rasel/every%20class/get_controller.dart';
 import 'package:class_rasel/screen/chat/chat_history_data.dart';
-import 'package:class_rasel/screen/chat/chat_service.dart';
+import 'package:class_rasel/screen/chat/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-class ChatHistoryScreen extends StatefulWidget {
-  const ChatHistoryScreen({super.key});
+import '../../every class/get_controller.dart';
 
-  @override
-  State<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
-}
-
-class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initialization();
-  }
+class ChatHistoryScreen extends StatelessWidget {
+  final ChatHistoryController chatController = Get.put(ChatHistoryController());
   final cont chatHistory = Get.find();
-  final List<ChatHistoryData> chats = [
-    // {
-    //   'name': 'John Doe',
-    //   'message': 'Hey, how are you?',
-    //   'time': '10:30 AM',
-    //   'avatar': 'https://via.placeholder.com/150'
-    // },
-    // {
-    //   'name': 'Jane Smith',
-    //   'message': 'Let\'s catch up later!',
-    //   'time': 'Yesterday',
-    //   'avatar': 'https://via.placeholder.com/150'
-    // },
-    // Add more chat data
-  ];
 
-  void initialization() async{
-    try{
-      var result = await fetchChatHistoryData(chatHistory.userId!);
-      print(result);
-      for(int i=0;i<result.data.lenght;i++){
-        var cs=ChatHistoryData(toUserId: result.data[i]["userId"], toUserName: result.data[i]["User"]["name"] , photo: result.data[i]["User"]["profileImage"], finalMessage: result.data[i]["Messages"]["content"], isRead: result.data[i]["Messages"]["isRead"], isReply: result.data[i]["Messages"]["isReply"], time:result.data[i]["Messages"]["timestamp"] );
-        chats.add(cs);
-      }
-    }catch(e){
-      print("        in here        ");
-      print(e);
-    }
-  }
+  ChatHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    chatController.fetchChatHistory(chatHistory.userId!); // Fetch initial data
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chats'),
@@ -60,41 +23,55 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Add search functionality here
+              // Add search functionality
             },
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: chats.length,
-        itemBuilder: (context, index) {
-          final chat = chats[index];
-          String ph=chat.photo;
-          String fullUrl ="$rootApi/$ph";
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                fullUrl, // Replace with the correct base URL
+      body: Obx(() {
+        if (chatController.chatHistory.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return ListView.builder(
+          itemCount: chatController.chatHistory.length,
+          itemBuilder: (context, index) {
+            final chat = chatController.chatHistory[index];
+            final lastMessage =
+            chat.messages.isNotEmpty ? chat.messages.last : null;
+
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  "$rootApi/${chat.user.profileImage}",
+                ),
               ),
-            ),
-            title: Text(
-              chat.toUserName,
-            ),
-            subtitle: Text(
-              chat.finalMessage,
-              style: TextStyle(
-                fontWeight: chat.isRead ? FontWeight.normal : FontWeight.bold,
+              title: Text(chat.user.name),
+              subtitle: Text(
+                lastMessage != null ? lastMessage.content : 'No messages yet',
+                style: TextStyle(
+                  fontWeight: lastMessage?.isRead ?? true
+                      ? FontWeight.normal
+                      : FontWeight.bold,
+                ),
               ),
-            ),
-            trailing: Text(chat.time),
-            onTap: () {
-              // Navigate to chat details screen
-            },
-          );
-        },
-      ),
+              trailing: Text(
+                lastMessage != null
+                    ? "${lastMessage.timestamp.hour}:${lastMessage.timestamp.minute}"
+                    : '',
+              ),
+              onTap: () {
+                Get.to(ChatScreen(chatId: chat.id));
+                // Navigate to chat details screen
+              },
+            );
+          },
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          //go to
+
           // Add functionality for new chat
         },
         child: const Icon(Icons.message),
