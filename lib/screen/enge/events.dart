@@ -82,7 +82,7 @@ class _EventsState extends State<Events> {
             eventCaption: item["title"],
             eventDescription: item["description"],
             eventId: item["id"],
-            eventImg: alu,
+            eventImg: item["EventMedia"],
             date: item["date"],
             location: putki, // Set location as the place name
           );

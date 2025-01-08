@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:class_rasel/Global.dart';
 import 'package:flutter/material.dart';
 
 class SliderMine extends StatefulWidget {
@@ -32,7 +33,7 @@ class _SliderMineState extends State<SliderMine> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: NetworkImage(widget.photos[index]["url"]),
+                image: NetworkImage("$rootApi/${widget.photos[index]["url"]}"),
                 fit: BoxFit.cover,
               ),
             ),
