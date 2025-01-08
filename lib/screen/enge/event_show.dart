@@ -1,3 +1,4 @@
+import 'package:class_rasel/screen/enge/see_who_show_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:geocoding/geocoding.dart';
@@ -379,84 +380,237 @@ class _EventShowState extends State<EventShow> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
+        child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top title with buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Event Details",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: _showEditBottomSheet,
-                        icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                        tooltip: "Edit",
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.location_on),
-                        onPressed: () {
-                          TextEditingController locationController = TextEditingController();
-                          displayLocationSelector(
-                            context,
-                            LatLng(37.7749, -122.4194), // Example initial location
-                            locationController,
-                          );
-                        },
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          // Example of an ISO 8601 timestamp string (you'll pass your own value here)
-                          String timestampString = eventData["date"]; // Replace this with your timestamp
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 0,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Event Details",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            _buildActionButton(
+                              icon: Icons.edit,
+                              color: Colors.blue,
+                              onTap: _showEditBottomSheet,
+                              tooltip: "Edit Event",
+                            ),
+                            SizedBox(width: 8),
+                            _buildActionButton(
+                              icon: Icons.location_on,
+                              color: Colors.red,
+                              onTap: () {
+                                TextEditingController locationController = TextEditingController();
+                                displayLocationSelector(
+                                  context,
+                                  LatLng(37.7749, -122.4194),
+                                  locationController,
+                                );
+                              },
+                              tooltip: "Change Location",
+                            ),
+                            SizedBox(width: 8),
+                            _buildActionButton(
+                              icon: Icons.calendar_today,
+                              color: Colors.green,
+                              onTap: () async {
+                                String timestampString = eventData["date"];
+                                DateTime initialDate = DateTime.parse(timestampString);
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: initialDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                  builder: (context, child) {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                        colorScheme: ColorScheme.light(
+                                          primary: Colors.green,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.white,
+                                          onSurface: Colors.black,
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  },
+                                );
 
-                          // Parse the ISO 8601 string to a DateTime object
-                          DateTime initialDate = DateTime.parse(timestampString);
-
-                          // Open the date picker with the initial date set to the parsed timestamp
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: initialDate,
-                            firstDate: DateTime(2000), // Adjust as needed
-                            lastDate: DateTime(2100), // Adjust as needed
-                          );
-
-                          if (pickedDate != null) {
-                            // Convert the selected date to ISO 8601 format
-                            String selectedTimestamp = pickedDate.toUtc().toIso8601String();
-
-                            // Handle the selected date
-                            print('Selected date: $pickedDate');
-                            print('Selected timestamp: $selectedTimestamp');
-
-                            // Update the state or perform other actions
-                            // Example: setState(() => yourVariable = selectedTimestamp);
-                          }
-                        },
-                        icon: const Icon(Icons.calendar_today, color: Colors.green),
-                        tooltip: "Calendar",
-                      )
-
-
-
-          ],
-                  ),
-                ],
+                                if (pickedDate != null) {
+                                  String selectedTimestamp = pickedDate.toUtc().toIso8601String();
+                                  // Handle date update
+                                }
+                              },
+                              tooltip: "Change Date",
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              _buildField("Title", "title"),
-              _buildField("Date", "date"),
-              _buildField("Location", "location"),
-              _buildField("Description", "description"),
-              const SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInfoSection("Title", "title", Icons.title),
+                    SizedBox(height: 16),
+                    _buildInfoSection("Date", "date", Icons.access_time),
+                    SizedBox(height: 16),
+                    _buildInfoSection("Location", "location", Icons.location_on),
+                    SizedBox(height: 16),
+                    _buildInfoSection("Description", "description", Icons.description),
+                    SizedBox(height: 24),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.people, color: Colors.blue),
+                          SizedBox(width: 12),
+                          Text(
+                            "Event Participants",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Container(
+                      height: 400,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 0,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: UserListPage(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+        )
+
+      ),
+    );
+  }
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    required String tooltip,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: Tooltip(
+        message: tooltip,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(50),
+          child: Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String label, String field, IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.blue, size: 20),
+              SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.only(left: 28),
+            child: Text(
+              eventData[field] ?? "Not specified",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -12,5 +12,6 @@ class cont extends GetxController {
   int? curretEventId;
   bool logInState=false;
   late VideoData vd;
+  late int otp;
 
 }
