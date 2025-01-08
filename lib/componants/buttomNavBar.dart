@@ -55,8 +55,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildNavItem(0, Icons.home_rounded, 'Home'),
-                  _buildNavItem(1, Icons.search_rounded, 'Search'),
-                  _buildNavItem(2, Icons.class_rounded, 'Classes'),
+                  _buildNavItem(1, Icons.event_available_rounded, 'Events'), // Changed to event icon
+                  _buildNavItem(2, Icons.message_rounded, 'Messages'), // Changed to message icon
                   _buildNavItem(3, Icons.settings_rounded, 'Settings'),
                 ],
               ),
