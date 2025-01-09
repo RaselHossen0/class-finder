@@ -109,69 +109,6 @@ class _SignupState extends State<Signup> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // Signup as User Button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: isLoadingUser
-                          ? null
-                          : () async {
-                              // Validation: Check if fields are empty
-
-                              setState(() {
-                                isLoadingUser = true;
-                              });
-
-                              EasyLoading.show(status: 'Signing up...');
-                              try {
-                                if (_name.text.isEmpty ||
-                                    _email.text.isEmpty ||
-                                    _pass.text.isEmpty) {
-                                  EasyLoading.showError(
-                                      'Please fill all fields');
-                                  return; // Prevent signup if fields are empty
-                                }
-                                var result = await signup(_name.text, _email.text, _pass.text, "user");
-
-                                if (result.statusCode == 200) {
-                                  box.write('token', result.data["token"]);
-                                  User us = User(
-                                      name: _name.text,
-                                      email: _email.text,
-                                      role: "user",
-                                      latLang: []);
-                                  signupCont.user = us;
-
-                                  EasyLoading.showSuccess(
-                                      result.data["message"]);
-                                  Get.offNamed('/Loader');
-                                }
-                              } catch (e) {
-                                print("Error: $e");
-                                EasyLoading.showError(
-                                    'An error occurred. Please try again.');
-                              } finally {
-                                setState(() {
-                                  isLoadingUser = false;
-                                });
-                                EasyLoading.dismiss();
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Color.fromARGB(255, 15, 98, 233),
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: isLoadingUser
-                          ? CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              'Signup as User',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                    ),
-                  ),
                   const SizedBox(width: 16),
 
                   // Signup as Class Owner Button
@@ -194,8 +131,8 @@ class _SignupState extends State<Signup> {
 
                               EasyLoading.show(status: 'Signing up...');
                               try {
-                                var result = await signup(
-                                    _name.text, _email.text, _pass.text,"class_owner");
+                                var result = await signup(_name.text,
+                                    _email.text, _pass.text, "class_owner");
                                 if (result == null) {
                                   EasyLoading.showError(
                                       'An error occurred. Please try again.');
@@ -206,6 +143,7 @@ class _SignupState extends State<Signup> {
                                   box.write('token', result.data["token"]);
                                   User us = User(
                                       name: _name.text,
+                                      profileImage: '',
                                       email: _email.text,
                                       role: "class_owner",
                                       latLang: []);
@@ -243,7 +181,7 @@ class _SignupState extends State<Signup> {
                       child: isLoadingOwner
                           ? CircularProgressIndicator(color: Colors.white)
                           : Text(
-                              'Signup as Class Owner',
+                              'Next',
                               style: TextStyle(fontSize: 16.0),
                             ),
                     ),

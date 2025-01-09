@@ -91,7 +91,7 @@ class Message {
       attachmentUrl: json['attachmentUrl'] ?? '',
       isRead: json['isRead'],
       isReply: json['isReply'],
-      repliedToId: json['repliedToId'],
+      repliedToId: json['repliedToId'] ?? -1,
       timestamp: DateTime.parse(json['timestamp']),
     );
   }

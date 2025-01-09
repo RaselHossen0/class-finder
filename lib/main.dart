@@ -9,6 +9,7 @@ import 'package:class_rasel/signup/signup.dart';
 import 'package:class_rasel/signup/th_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -21,7 +22,7 @@ Future<void> main() async {
   await GetStorage.init(); // Initialize GetStorage
   await initializeApp(); // Call the custom initialization function
   // Register the controller
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

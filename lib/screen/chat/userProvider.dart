@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -60,7 +61,7 @@ class UserController extends GetxController {
 
   // Fetch user details
   Future<void> fetchUserDetails(String token) async {
-    final url = Uri.parse('http://localhost:3000/auth/user-details');
+    final url = Uri.parse('$rootApi/auth/user-details');
 
     try {
       final response = await http.get(

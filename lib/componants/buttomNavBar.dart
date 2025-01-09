@@ -1,10 +1,10 @@
-import 'package:class_rasel/screen/classes.dart';
 import 'package:class_rasel/screen/enge.dart';
 import 'package:class_rasel/screen/home.dart';
 import 'package:class_rasel/screen/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/chat/chat_history_screen.dart';
+import '../screen/event/eventScreen.dart';
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -18,7 +18,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     HomePage(),
     Enge(initialIndex: 0),
     ChatHistoryScreen(),
-    Settings(),
+    EventsScreen(),
+    ClassOwnerDetailsScreen(),
   ];
 
   void _onTabTapped(int index) {
@@ -47,12 +48,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.class_),
-            label: 'Classes',
+            icon: Icon(Icons.message),
+            label: 'Messages',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.event),
+            label: 'Events',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),

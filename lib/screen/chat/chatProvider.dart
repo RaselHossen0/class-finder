@@ -1,6 +1,7 @@
-
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 import '../../Global.dart';
 import 'chatRepo.dart';
 import 'message.dart';
@@ -31,12 +32,13 @@ class ChatController extends GetxController {
   }
 
   /// Setup WebSocket connection for real-time updates
-  void setupSocket(int chatId) {
+  void setupSocket(int chatId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = await prefs.getString('token');
     socket = IO.io(
       '$rootApi',
-      IO.OptionBuilder()
-          .setTransports(['websocket']) // Use WebSocket transport
-          .setExtraHeaders({'Authorization': 'Bearer YOUR_AUTH_TOKEN'}) // Add headers
+      IO.OptionBuilder().setTransports(['websocket']) // Use WebSocket transport
+          .setExtraHeaders({'Authorization': 'Bearer $token'}) // Add headers
           .build(),
     );
 
@@ -85,7 +87,8 @@ class ChatController extends GetxController {
         isRead: true,
         timestamp: DateTime.now(),
         createdAt: DateTime.now(),
-        updatedAt: DateTime.now(), attachmentUrl: '',
+        updatedAt: DateTime.now(),
+        attachmentUrl: '',
       );
       chatMessages.insert(0, newMessage);
     } catch (error) {
