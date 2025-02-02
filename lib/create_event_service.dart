@@ -1,47 +1,57 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:class_rasel/Global.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<Response?> createEvent(
+Future<Response?> createOrUpdateEvent(
     String title,
     String date,
     String description,
     int classId,
-    String location,
+    String location, // Human-readable location (optional)
+    LatLng coordinates, // Coordinates as LatLng
     List<File> files,
     String token,
-    ) async {
+    {bool isUpdate = false,
+    int? eventId}) async {
   final dio = Dio();
 
-  print("              in        sskaw          ");
-
   try {
-    // Preparing files for multipart data
-
-    print("              in        sskaw          ");
+    // Prepare the files for multipart data
     List<MultipartFile> fileParts = [];
     for (var file in files) {
       fileParts.add(
-        await MultipartFile.fromFile(file.path, filename: file.uri.pathSegments.last),
+        await MultipartFile.fromFile(
+          file.path,
+          filename: file.uri.pathSegments.last,
+        ),
       );
     }
 
-    // Constructing FormData
+    // Format the coordinates as a string
+    String formattedCoordinates =
+        "${coordinates.latitude},${coordinates.longitude}";
+
+    // Construct FormData
     FormData formData = FormData.fromMap({
       'title': title,
       'date': date,
       'description': description,
       'classId': classId,
       'location': location,
+      'coordinates': formattedCoordinates, // Send as a string
       'files': fileParts, // Add files as a list of MultipartFile
     });
 
-    print("FormData: ${formData.fields}");
-    print("Files: ${formData.files}");
+    // Determine URL and method based on isUpdate
+    final url = isUpdate && eventId != null
+        ? '$rootApi/events/$eventId'
+        : '$rootApi/events';
+    final method = isUpdate ? dio.put : dio.post;
 
-    // Sending POST request
-    final response = await dio.post(
-      '$rootApi/events',
+    // Send request
+    final response = await method(
+      url,
       data: formData,
       options: Options(
         headers: {
@@ -51,8 +61,8 @@ Future<Response?> createEvent(
         },
       ),
     );
+    print('Response: $response');
 
-    print('Response data: ${response.data}');
     return response;
   } catch (e) {
     print('Error during file upload: $e');

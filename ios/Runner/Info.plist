@@ -10,6 +10,12 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to select images.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to take photos.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to your microphone to record videos.</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -50,5 +56,6 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
 </dict>
 </plist>

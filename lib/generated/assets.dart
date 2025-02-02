@@ -3,7 +3,7 @@ class Assets {
   Assets._();
 
   static const String iconsAdd = 'assets/icons/add.svg';
-  static const String iconsAlu (2) = 'assets/icons/alu (2).png';
+  static const String iconsAlu = 'assets/icons/alu (2).png';
   static const String iconsCategories = 'assets/icons/categories.png';
   static const String iconsChat = 'assets/icons/chat.svg';
   static const String iconsFacebook = 'assets/icons/facebook.svg';
@@ -18,5 +18,4 @@ class Assets {
   static const String imagesMainTop = 'assets/images/main_top.png';
   static const String imagesPassword = 'assets/images/password.png';
   static const String imagesSignupTop = 'assets/images/signup_top.png';
-
 }

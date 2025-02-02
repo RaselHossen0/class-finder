@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class EventMedia {
   final int id;
   final String url;
@@ -16,6 +18,7 @@ class EventMedia {
   });
 
   factory EventMedia.fromJson(Map<String, dynamic> json) {
+    print("EventMedia.fromJson: $json");
     return EventMedia(
       id: json['id'],
       url: json['url'],
@@ -38,6 +41,7 @@ class Event {
   final DateTime updatedAt;
   final List<EventMedia> eventMedia;
   final String className;
+  final LatLng? coordinates;
 
   Event({
     required this.id,
@@ -50,9 +54,11 @@ class Event {
     required this.updatedAt,
     required this.eventMedia,
     required this.className,
+    this.coordinates,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
+    print("Event.fromJson: $json");
     var mediaList = json['EventMedia'] as List;
     List<EventMedia> eventMediaList =
         mediaList.map((i) => EventMedia.fromJson(i)).toList();
@@ -67,7 +73,11 @@ class Event {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       eventMedia: eventMediaList,
-      className: json['Class']['name'],
+      className: '',
+      coordinates: json['coordinates'] != null
+          ? LatLng(json['coordinates']['coordinates'][1],
+              json['coordinates']['coordinates'][0])
+          : null,
     );
   }
 }

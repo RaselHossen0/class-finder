@@ -1,20 +1,67 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:class_rasel/Global.dart';
+import 'package:class_rasel/every%20class/get_controller.dart';
+import 'package:class_rasel/screen/event/create_edit_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../models/event.dart';
 import 'eventProvider.dart';
 import 'event_details.dart';
+import 'package:intl/intl.dart';
 
 class EventsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pagingController = ref.watch(pagedEventsProvider);
+    final apiService = ref.watch(apiServiceProvider);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        // forceMaterialTransparency: true,
+        backgroundColor: cPrimaryColor,
+        actions: [
+          //create event button
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CreateEditEvent(event: null, isEditMode: false),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.add, color: Colors.black),
+
+                  const SizedBox(
+                      width: 8), // Add some spacing between the icon and text
+                  Text(
+                    'Create Event',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
       body: PagedListView<int, Event>(
         pagingController: pagingController,
         builderDelegate: PagedChildBuilderDelegate<Event>(
@@ -94,7 +141,7 @@ class EventsScreen extends ConsumerWidget {
                                 color: Colors.grey),
                             const SizedBox(width: 10),
                             Text(
-                              'Date: ${event.date.toLocal()}',
+                              'Date: ${DateFormat.yMMMd().format(event.date)}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge
@@ -108,21 +155,7 @@ class EventsScreen extends ConsumerWidget {
                             const Icon(Icons.location_on, color: Colors.grey),
                             const SizedBox(width: 10),
                             Text(
-                              'Location: ${event.location ?? "Not specified"}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(color: Colors.grey[700]),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Icon(Icons.person, color: Colors.grey),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Hosted by: ${event.className}',
+                              'Location: ${event.location}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge
@@ -146,13 +179,48 @@ class EventsScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(),
                             // TextButton.icon(
                             //   onPressed: () {},
                             //   icon: const Icon(Icons.favorite_border,
                             //       color: Colors.red),
                             //   label: const Text('Save'),
                             // ),
+                            IconButton(
+                              onPressed: () async {
+                                final creatEv = Get.find();
+
+                                final token = await creatEv.token;
+                                try {
+                                  await apiService.deleteEvent(event.id, token);
+                                  // Handle successful deletion, e.g., refresh the list
+                                } catch (e) {
+                                  // Handle error, e.g., show a snackbar
+                                }
+                                await refreshEvents(ref);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                              ),
+                              icon:
+                                  const Icon(Icons.delete, color: Colors.white),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateEditEvent(
+                                        event: event, isEditMode: true),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                            ),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -164,7 +232,7 @@ class EventsScreen extends ConsumerWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
+                                backgroundColor: cPrimaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),

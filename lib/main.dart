@@ -1,5 +1,5 @@
 import 'package:class_rasel/componants/buttomNavBar.dart';
-import 'package:class_rasel/screen/create_event.dart';
+import 'package:class_rasel/screen/event/create_event.dart';
 import 'package:class_rasel/screen/enge.dart';
 import 'package:class_rasel/screen/enge/event_show.dart';
 import 'package:class_rasel/screen/login/login_screen.dart';

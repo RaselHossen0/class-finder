@@ -4,6 +4,7 @@ class User {
   late String name;
   late String email;
   String profileImage;
+  int? classId;
   String? mobileNumber; // Nullable: Can be null if not provided
   String? alternateMobileNumber; // Nullable: Can be null if not provided
   String? adharCardNum; // Nullable: Can be null if not provided
@@ -26,6 +27,7 @@ class User {
     required this.name,
     required this.email,
     required this.profileImage,
+    this.classId, // Optional: Can be null
     this.mobileNumber, // Optional: Can be null
     this.alternateMobileNumber, // Optional: Can be null
     this.adharCardNum, // Optional: Can be null
@@ -62,6 +64,10 @@ class User {
           rootApi + "/" + json['classOwner']['aadhaarCardFile'];
       user.panCardFile = rootApi + "/" + json['classOwner']['panCardFile'];
       user.photo = rootApi + json['classOwner']['photographFile'];
+      // user.certificates = json['classOwner']['certificates']
+      //     .map<String>((certificate) => rootApi + certificate)
+      //     .toList();
+      user.classId = json['classOwner']['classId'];
     }
 
     return user;

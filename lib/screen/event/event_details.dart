@@ -208,29 +208,29 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               ),
             const SizedBox(height: 20),
             // Action Buttons
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Share Event Logic
-                      final shareContent =
-                          'Check out this event: ${widget.event.title} at ${widget.event.location} on ${widget.event.date.day} ${DateFormat('MMM yyyy').format(widget.event.date)}!';
-                      // Call share functionality here
-                      print(shareContent);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
-                      padding: const EdgeInsets.all(16),
-                      shape: CircleBorder(),
-                    ),
-                    child: Icon(Icons.share, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Row(
+            //     children: [
+            //       const SizedBox(width: 16),
+            //       ElevatedButton(
+            //         onPressed: () {
+            //           // Share Event Logic
+            //           final shareContent =
+            //               'Check out this event: ${widget.event.title} at ${widget.event.location} on ${widget.event.date.day} ${DateFormat('MMM yyyy').format(widget.event.date)}!';
+            //           // Call share functionality here
+            //           print(shareContent);
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: Colors.grey[800],
+            //           padding: const EdgeInsets.all(16),
+            //           shape: CircleBorder(),
+            //         ),
+            //         child: Icon(Icons.share, color: Colors.white),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const SizedBox(height: 20),
           ],
         ),

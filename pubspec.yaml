@@ -35,6 +35,11 @@ dependencies:
   shared_preferences: ^2.2.0
   flutter_riverpod:
   infinite_scroll_pagination:
+  whitecodel_reels:
+  google_fonts:
+  google_nav_bar:
+  cached_network_image:
+  interactiveviewer_gallery_plus: ^0.1.0
 
 
 

@@ -64,7 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           }
 
-          final chatMessages = chatController.chatMessages.reversed.map((msg) {
+          final chatMessages = chatController.chatMessages.map((msg) {
             final author = types.User(
                 id: msg.senderId.toString(), firstName: 'Instructor');
             return types.TextMessage(
@@ -74,6 +74,9 @@ class _ChatScreenState extends State<ChatScreen> {
               createdAt: msg.timestamp.millisecondsSinceEpoch,
             );
           }).toList();
+
+          chatMessages
+              .sort((a, b) => (a.createdAt ?? 0).compareTo(b.createdAt ?? 0));
 
           final currentUser = types.User(
             id: chatS.userId.toString(),

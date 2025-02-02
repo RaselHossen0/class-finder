@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:class_rasel/iniApp.dart';
 import 'package:class_rasel/signup/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -66,8 +67,11 @@ class _BodyState extends ConsumerState<Body> {
           // Store the token in SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
-          box.write('token', data['token']);
+
+          await box.write('token', data['token']);
+          await initializeApp();
           Get.offNamed('/Loader');
+
           // await ref.read(userDetailsProvider.notifier).fetchUserDetails(token!);
           // Navigate to the next screen
           // Navigator.pushReplacement(

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:class_rasel/iniApp.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -54,6 +55,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
         final errorMessage =
             json.decode(response.body)["message"] ?? 'Login failed';
         state = LoginState(errorMessage: errorMessage);
+        await initializeApp(); // Call the custom initialization function
         EasyLoading.showError(errorMessage);
       }
     } catch (e) {

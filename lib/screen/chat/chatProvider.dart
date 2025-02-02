@@ -77,20 +77,20 @@ class ChatController extends GetxController {
         'content': content,
       });
       // Add the message locally to display immediately
-      final newMessage = Message(
-        id: DateTime.now().millisecondsSinceEpoch,
-        chatId: chatId,
-        senderId: senderId,
-        content: content,
-        isReply: false,
-        repliedToId: null,
-        isRead: true,
-        timestamp: DateTime.now(),
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        attachmentUrl: '',
-      );
-      chatMessages.insert(0, newMessage);
+      // final newMessage = Message(
+      //   id: DateTime.now().millisecondsSinceEpoch,
+      //   chatId: chatId,
+      //   senderId: senderId,
+      //   content: content,
+      //   isReply: false,
+      //   repliedToId: null,
+      //   isRead: true,
+      //   timestamp: DateTime.now(),
+      //   createdAt: DateTime.now(),
+      //   updatedAt: DateTime.now(),
+      //   attachmentUrl: '',
+      // );
+      // chatMessages.insert(0, newMessage);
     } catch (error) {
       print('Error sending message: $error');
     }
